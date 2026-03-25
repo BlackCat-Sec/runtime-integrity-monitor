@@ -1,0 +1,25 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "name": "fixture-app",
+      "type": "application"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "jinja2",
+      "version": "2.10",
+      "purl": "pkg:pypi/jinja2@2.10"
+    },
+    {
+      "type": "library",
+      "name": "lodash",
+      "version": "4.17.11",
+      "purl": "pkg:npm/lodash@4.17.11"
+    }
+  ]
+}

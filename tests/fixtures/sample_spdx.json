@@ -1,0 +1,19 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "fixture-spdx",
+  "packages": [
+    {
+      "name": "jinja2",
+      "SPDXID": "SPDXRef-jinja2",
+      "versionInfo": "2.10",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:pypi/jinja2@2.10"
+        }
+      ]
+    }
+  ]
+}

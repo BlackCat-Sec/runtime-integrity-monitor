@@ -1,0 +1,12 @@
+[project]
+name = "sample-python-project"
+version = "0.1.0"
+dependencies = [
+  "flask==2.0.0",
+  "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.4.2",
+]
