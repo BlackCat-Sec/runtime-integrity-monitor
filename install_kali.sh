@@ -6,6 +6,22 @@ BIN_DIR="${HOME}/.local/bin"
 TARGET="${BIN_DIR}/rim-scan"
 PATH_EXPORT='export PATH="$HOME/.local/bin:$PATH"'
 
+run_privileged() {
+  if command -v sudo >/dev/null 2>&1; then
+    sudo "$@"
+    return
+  fi
+
+  if [[ "$(id -u)" -eq 0 ]]; then
+    "$@"
+    return
+  fi
+
+  echo "Need elevated privileges to install Kali prerequisites." >&2
+  echo "Re-run as root or install git/python3/python3-venv/python3-pip first." >&2
+  exit 1
+}
+
 missing=0
 for cmd in git python3; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
@@ -13,10 +29,16 @@ for cmd in git python3; do
   fi
 done
 
+if command -v python3 >/dev/null 2>&1; then
+  if ! python3 -m venv --help >/dev/null 2>&1; then
+    missing=1
+  fi
+fi
+
 if [[ $missing -eq 1 ]]; then
   echo "Installing Kali prerequisites with apt..."
-  sudo apt-get update
-  sudo apt-get install -y git python3 python3-venv python3-pip
+  run_privileged apt-get update
+  run_privileged apt-get install -y git python3 python3-venv python3-pip
 fi
 
 mkdir -p "$BIN_DIR"

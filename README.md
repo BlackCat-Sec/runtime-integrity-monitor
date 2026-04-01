@@ -40,6 +40,7 @@ rim-scan --help
 ```
 
 The installer also appends `~/.local/bin` to the usual Kali shell startup files when needed.
+If you prefer, `bash install_kali.sh` works too.
 
 ### 3. Scan a local path
 
@@ -88,6 +89,7 @@ Behavior:
 - `install_kali.sh` bootstraps a local virtual environment and writes the `rim-scan` wrapper into `~/.local/bin`.
 - `run_kali.sh` is safe to call directly if you do not want to install the wrapper yet.
 - If `git` or `python3-venv` is missing, `install_kali.sh` installs them with `apt`.
+- The installer works in both the usual `sudo` workflow and a root shell.
 - If you invoke `run_kali.sh` or `rim-scan` with no arguments, it scans the current directory.
 - For air-gapped or tightly firewalled Kali systems, use `--offline` to skip OSV lookups and still get dependency inventory plus risk scoring.
 

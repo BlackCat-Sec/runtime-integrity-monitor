@@ -1,0 +1,47 @@
+name: Kali Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  kali-smoke:
+    runs-on: ubuntu-latest
+    container:
+      image: kalilinux/kali-rolling
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Kali prerequisites
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y git python3 python3-venv python3-pip ca-certificates
+
+      - name: Verify executable scripts
+        run: |
+          test -x ./run_kali.sh
+          test -x ./install_kali.sh
+
+      - name: Install wrapper
+        run: |
+          ./install_kali.sh
+          export PATH="$HOME/.local/bin:$PATH"
+          rim-scan --help
+
+      - name: Smoke test local path
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          rim-scan --offline .
+
+      - name: Smoke test SBOM
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          rim-scan --offline tests/fixtures/sample_cyclonedx.json
+
+      - name: Smoke test repo URL
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          rim-scan --offline https://github.com/BlackCat-tec/runtime-integrity-monitor.git
