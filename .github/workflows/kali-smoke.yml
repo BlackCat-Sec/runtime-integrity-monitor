@@ -44,4 +44,4 @@ jobs:
       - name: Smoke test repo URL
         run: |
           export PATH="$HOME/.local/bin:$PATH"
-          rim-scan --offline https://github.com/BlackCat-tec/runtime-integrity-monitor.git
+          rim-scan --offline --repo-url "$GITHUB_WORKSPACE"
