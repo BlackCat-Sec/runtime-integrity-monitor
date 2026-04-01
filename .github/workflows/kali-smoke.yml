@@ -44,4 +44,4 @@ jobs:
       - name: Smoke test repo URL
         run: |
           export PATH="$HOME/.local/bin:$PATH"
-          rim-scan --offline --repo-url "$GITHUB_WORKSPACE"
+          rim-scan --offline https://github.com/pallets/click.git
