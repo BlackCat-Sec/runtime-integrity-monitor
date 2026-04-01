@@ -18,6 +18,62 @@ The default workflow is optimized for Kali Linux, but the scanner also works on 
 - Known vulnerabilities from the OSV public API
 - Risk factors such as unpinned dependencies, affected package count, and parser/network warnings
 
+## Why It Helps
+
+This tool is useful when you need a fast, repeatable way to understand supply-chain risk without manually reviewing multiple manifests or SBOMs.
+
+- For Kali users and security engineers, it gives a quick dependency exposure snapshot during recon, triage, or client-side code review.
+- For AppSec and DevSecOps teams, it turns dependency discovery and vulnerability lookups into a repeatable CLI step that can be used locally or in CI.
+- For incident response and audit work, it helps answer basic questions quickly: what dependencies exist, which ones are pinned, and which ones are already tied to known advisories.
+- For teams consuming third-party software, SBOM support helps validate vendor-delivered inventories instead of trusting them blindly.
+
+## How It Works
+
+The scanner follows the same broad flow regardless of whether you scan a path, a repository URL, or an SBOM.
+
+1. It resolves the target.
+   A local directory is scanned in place, a Git URL is shallow-cloned to a temporary directory, and an SBOM file is parsed directly.
+2. It discovers supported dependency sources.
+   For source trees, it recursively looks for common Python and Node manifests such as `requirements.txt`, `pyproject.toml`, `poetry.lock`, `Pipfile.lock`, `package.json`, and `package-lock.json`.
+3. It extracts dependency components.
+   Each package is normalized into a component record with ecosystem, version, source file, dependency type, and whether the dependency is pinned to an exact version.
+4. It queries official vulnerability data.
+   When online mode is enabled, the tool queries the [OSV API](https://osv.dev/) for components that have both a supported ecosystem and an exact version.
+5. It computes a risk score.
+   The score combines vulnerability findings with hygiene signals such as unpinned dependencies, affected package breadth, and scan warnings.
+6. It prints a concise summary and can also emit structured JSON.
+   This makes it easy to use for both interactive Kali workflows and automation.
+
+## Choosing a Scan Mode
+
+Use the scan mode that matches where you are in the workflow.
+
+- Use a local path scan when you already have the code checked out and want the fastest feedback.
+- Use a Git repository URL when you want to inspect a remote codebase without cloning it manually first.
+- Use an SBOM scan when a vendor, build system, or artifact repository gives you inventory data instead of source code.
+- Use `--offline` when you are in a restricted environment and still want dependency inventory plus basic risk scoring.
+- Use `--fail-on-score` when you want CI or a scripted Kali workflow to stop on higher-risk results.
+
+## Risk Score Explained
+
+The risk score is meant to be a prioritization aid, not a substitute for human review.
+
+- `0-24` low: few or no known issues, and dependency hygiene is relatively good
+- `25-54` medium: some meaningful risk signals are present, such as unpinned packages or moderate advisory volume
+- `55-79` high: multiple material issues are present and the target should be reviewed before trust or deployment
+- `80-100` critical: the target shows heavy exposure, poor dependency hygiene, or both
+
+The score is influenced by:
+
+- vulnerability severity counts returned from OSV
+- how many direct dependencies are not pinned to exact versions
+- how many unique packages are affected
+- parser or network warnings that reduce confidence in the scan
+
+Important limitation:
+
+- unpinned dependencies can still increase the risk score, but they usually cannot be matched precisely to OSV because vulnerability lookup works best with exact versions
+
 ## Quick Start on Kali Linux
 
 ### 1. Clone the repository
